@@ -23,12 +23,12 @@ with aba_dashboard:
     st.subheader("📊 Resumo de despesas")  
 
     # --- LEITURA DO CSV ---
-    csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBkpKdCzmIo75NeXMB3yZNwao619HoP47aeflTbibUTfplVOkXAiBJjEzqjqChkYPsWm0a2Ip8p-AA/pub?gid=802273684&single=true&output=csv"
+    csv_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQBkpKdCzmIo75NeXMB3yZNwao619HoP47aeflTbibUTfplVOkXAiBJjEzqjqChkYPsWm0a2Ip8p-AA/pub?output=csv"
 
     @st.cache_data
     def carregar_dados(url):
         df = pd.read_csv(url)
-        df['Competência'] = pd.to_datetime(df['Competência'], errors='coerce')
+        df['Competência'] = pd.to_datetime(df['Competência'], format='%d/%m/%Y', errors='coerce')
         df['Ano'] = df['Competência'].dt.year
         df['Mês'] = df['Competência'].dt.strftime('%B')
 
@@ -55,6 +55,7 @@ with aba_dashboard:
         ano_selecionado = st.selectbox("Selecione o Ano", anos)
     with col2:
         meses = df['Mês'].dropna().unique()
+        meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
         mes_selecionado = st.selectbox("Selecione o Mês", meses)
     
     st.markdown("-------------------------------------")
@@ -80,7 +81,7 @@ with aba_dashboard:
         'May': 'Maio', 'June': 'Junho', 'July': 'Julho', 'August': 'Agosto',
         'September': 'Setembro', 'October': 'Outubro', 'November': 'Novembro', 'December': 'Dezembro'
     }
-    df_exibicao['Competência'] = df_exibicao['Competência'].dt.strftime('%B/%Y').replace(meses_portugues, regex=True)
+    df_exibicao['Competência'] = df_exibicao['Competência'].dt.strftime('%d/%m/%Y')
 
     colunas_ordenadas = ['Despesa','Fornecedor','Competência','Valor','Valor p/ Cada','Parcela','Observação']
     df_exibicao = df_exibicao[colunas_ordenadas]
